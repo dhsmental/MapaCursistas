@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursistas do Moodle pelo Brasil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <style>
+        .state {
+            stroke: #475569;
+            stroke-width: 1.5px;
+            cursor: pointer;
+            transition: fill 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+        }
+        .state:hover {
+            stroke: #0f172a;
+            stroke-width: 2.5px;
+            opacity: 0.95;
+        }
+        .state-dimmed {
+            opacity: 0.25;
+        }
+        .state-highlighted {
+            opacity: 1;
+            stroke: #0f172a;
+            stroke-width: 2.5px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2.5">
+                    <i class="fa-solid fa-map-location-dot text-indigo-600 text-lg"></i>
+                    Cursistas do Moodle pelo Brasil
+                </h1>
+                <p class="text-xs text-slate-500 mt-0.5">Dados extraídos do dia 04/09/2026</p>
+            </div>
+            <div class="mt-3 md:mt-0 flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Planilha Consolidada (2.132 Total)
+                </span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Total Geral da Planilha</p>
+                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1">2.132</h3>
+                    
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Estado Destaque (#1)</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Rio Grande do Sul (RS)</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">622 cursistas (29,17%)</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Cursistas Cadastrados Guri</p>
+                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1">4.009</h3>
+			<p class="text-xs text-slate-500 mt-0.5">Dados extraídos do dia 04/09/2026</p>
+                    
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            
+            <!-- MAPA E RESUMO POR REGIÃO -->
+            <div class="lg:col-span-2 space-y-6 flex flex-col">
+                <!-- MAPA -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-earth-americas text-indigo-600"></i>
+                            Mapa Coroplético do Brasil
+                        </h2>
+                        <span id="map-subtitle" class="text-xs text-slate-400">Passe o mouse ou clique em um estado</span>
+                    </div>
+                    <div id="map-container" class="w-full h-[400px] bg-slate-50 rounded-xl relative overflow-hidden flex items-center justify-center">
+                        <div id="loading-spinner" class="flex flex-col items-center justify-center gap-2">
+                            <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span class="text-xs text-slate-500 font-medium">Carregando mapa...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RESUMO POR REGIÕES -->
+                <div id="resumo-regiao-section" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-teal-600"></i> Resumo por Região (Passe o mouse para filtrar)
+                        </h3>
+                        
+                    </div>
+                    <div id="regions-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL LATERAL -->
+            <div class="space-y-6 flex flex-col">
+                
+                <!-- DETALHES -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all duration-200">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-indigo-600"></i> Detalhes do Estado
+                        </h3>
+                        <span id="detail-uf-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700">RS</span>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4 id="detail-state-name" class="text-xl font-extrabold text-slate-900">Rio Grande do Sul</h4>
+                        <p id="detail-region" class="text-xs text-slate-400 uppercase tracking-wide font-medium mt-0.5">Região Sul</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-5">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-500 font-medium block">Total de Cursistas</span>
+                            <span id="detail-cursistas" class="text-xl font-black text-slate-900 mt-1 block">622</span>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-500 font-medium block">% do Total</span>
+                            <span id="detail-pct" class="text-xl font-black text-indigo-600 mt-1 block">29,17%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARTÃO NÃO DECLARADO (ND) -->
+                <div class="bg-amber-50/60 p-4 rounded-2xl shadow-sm border border-amber-200/80 flex items-center justify-between cursor-pointer hover:bg-amber-50 transition" onmouseenter="updateDetails('NAN')" onclick="updateDetails('NAN')">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-amber-100 text-amber-700 p-2.5 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Não Declarado / Sem UF (NAN)</h4>
+                            <p class="text-lg font-bold text-slate-900 mt-0.5">103 cursistas</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-lg">4,83%</span>
+                </div>
+
+                <!-- RANKING -->
+                <div id="ranking-card" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-ranking-star text-amber-500"></i> Ranking por Estado
+                        </h3>
+                        <span class="text-xs text-slate-400">Planilha Oficial</span>
+                    </div>
+                    
+                    <div id="ranking-list" class="mt-4 space-y-3 overflow-y-auto flex-1 pr-1">
+                        <!-- Itens preenchidos via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const planilhaData = [
+            { uf: 'RS', cursistas: 622, pct: 29.17, regiao: 'Região Sul' },
+            { uf: 'PB', cursistas: 197, pct: 9.24, regiao: 'Região Nordeste' },
+            { uf: 'SP', cursistas: 133, pct: 6.24, regiao: 'Região Sudeste' },
+            { uf: 'SE', cursistas: 127, pct: 5.96, regiao: 'Região Nordeste' },
+            { uf: 'PE', cursistas: 118, pct: 5.53, regiao: 'Região Nordeste' },
+            { uf: 'PI', cursistas: 106, pct: 4.97, regiao: 'Região Nordeste' },
+            { uf: 'NAN', cursistas: 103, pct: 4.83, regiao: 'Não Definido' },
+            { uf: 'SC', cursistas: 94, pct: 4.41, regiao: 'Região Sul' },
+            { uf: 'RJ', cursistas: 92, pct: 4.32, regiao: 'Região Sudeste' },
+            { uf: 'RN', cursistas: 69, pct: 3.24, regiao: 'Região Nordeste' },
+            { uf: 'AM', cursistas: 68, pct: 3.19, regiao: 'Região Norte' },
+            { uf: 'BA', cursistas: 64, pct: 3.00, regiao: 'Regiao Nordeste' },
+            { uf: 'MS', cursistas: 57, pct: 2.67, regiao: 'Região Centro-Oeste' },
+            { uf: 'MG', cursistas: 52, pct: 2.44, regiao: 'Região Sudeste' },
+            { uf: 'CE', cursistas: 30, pct: 1.41, regiao: 'Regiao Nordeste' },
+            { uf: 'AC', cursistas: 29, pct: 1.36, regiao: 'Regiao Norte' },
+            { uf: 'PA', cursistas: 27, pct: 1.27, regiao: 'Regiao Norte' },
+            { uf: 'PR', cursistas: 25, pct: 1.17, regiao: 'Região Sul' },
+            { uf: 'MA', cursistas: 23, pct: 1.08, regiao: 'Regiao Nordeste' },
+            { uf: 'RR', cursistas: 20, pct: 0.94, regiao: 'Regiao Norte' },
+            { uf: 'RO', cursistas: 16, pct: 0.75, regiao: 'Regiao Norte' },
+            { uf: 'AL', cursistas: 15, pct: 0.70, regiao: 'Regiao Nordeste' },
+            { uf: 'DF', cursistas: 15, pct: 0.70, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'GO', cursistas: 9, pct: 0.42, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'ES', cursistas: 8, pct: 0.38, regiao: 'Regiao Sudeste' },
+            { uf: 'MT', cursistas: 4, pct: 0.19, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'TO', cursistas: 4, pct: 0.19, regiao: 'Regiao Norte' },
+            { uf: 'AP', cursistas: 4, pct: 0.19, regiao: 'Regiao Norte' },
+            { uf: 'UY', cursistas: 1, pct: 0.05, regiao: 'Exterior' }
+        ];
+
+        const stateNames = {
+            'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas', 'BA': 'Bahia',
+            'CE': 'Ceará', 'DF': 'Distrito Federal', 'ES': 'Espírito Santo', 'GO': 'Goiás',
+            'MA': 'Maranhão', 'MT': 'Mato Grosso', 'MS': 'Mato Grosso do Sul', 'MG': 'Minas Gerais',
+            'PA': 'Pará', 'PB': 'Paraíba', 'PR': 'Paraná', 'PE': 'Pernambuco', 'PI': 'Piauí',
+            'RJ': 'Rio de Janeiro', 'RN': 'Rio Grande do Norte', 'RS': 'Rio Grande do Sul',
+            'RO': 'Rondônia', 'RR': 'Roraima', 'SC': 'Santa Catarina', 'SP': 'São Paulo',
+            'SE': 'Sergipe', 'TO': 'Tocantins', 'NAN': 'Não Declarado', 'UY': 'Uruguai'
+        };
+
+        function normalizeRegion(reg) {
+            if (!reg) return '';
+            return reg.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+        }
+
+        const dataMap = {};
+        planilhaData.forEach(d => { 
+            if (d.regiao) {
+                d.regiaoNorm = normalizeRegion(d.regiao);
+            }
+            dataMap[d.uf] = d; 
+        });
+
+        const officialRegions = ['Região Sul', 'Região Nordeste', 'Região Sudeste', 'Região Norte', 'Região Centro-Oeste'];
+        const regionStats = {};
+        
+        officialRegions.forEach(reg => {
+            regionStats[reg] = { total: 0, pct: 0 };
+        });
+
+        planilhaData.forEach(d => {
+            let regKey = officialRegions.find(r => normalizeRegion(r) === d.regiaoNorm);
+            if (regKey && regionStats[regKey]) {
+                regionStats[regKey].total += d.cursistas;
+                regionStats[regKey].pct += d.pct;
+            }
+        });
+
+        const regionsContainer = document.getElementById('regions-container');
+        officialRegions.forEach(regiao => {
+            const stat = regionStats[regiao];
+            const card = document.createElement('div');
+            card.className = "bg-teal-50/80 hover:bg-teal-100 border border-teal-200/90 p-2.5 rounded-xl cursor-pointer transition text-center group shadow-sm";
+            card.onmouseenter = () => highlightRegion(regiao);
+            card.onmouseleave = () => resetRegionFilter();
+            card.onclick = () => highlightRegion(regiao);
+            card.innerHTML = `
+                <p class="text-[11px] font-bold text-teal-800 truncate group-hover:text-teal-950">${regiao}</p>
+                <p class="text-base font-black text-slate-900 mt-0.5">${stat.total}</p>
+                <p class="text-[11px] text-teal-700 font-semibold mt-0.5">${stat.pct.toFixed(1)}%</p>
+            `;
+            regionsContainer.appendChild(card);
+        });
+
+        function resetRegionFilter() {
+            d3.selectAll(".state")
+                .classed("state-dimmed", false)
+                .classed("state-highlighted", false)
+                .style("opacity", 1);
+            document.getElementById('map-subtitle').innerText = "Passe o mouse ou clique em um estado";
+        }
+
+        function highlightRegion(regiaoName) {
+            const targetNorm = normalizeRegion(regiaoName);
+            d3.selectAll(".state").each(function(d) {
+                const uf = d.properties.sigla;
+                const match = dataMap[uf];
+                const regiaoNorm = match ? match.regiaoNorm : '';
+                
+                if (regiaoNorm === targetNorm) {
+                    d3.select(this)
+                        .classed("state-highlighted", true)
+                        .classed("state-dimmed", false)
+                        .style("opacity", 1);
+                } else {
+                    d3.select(this)
+                        .classed("state-dimmed", true)
+                        .classed("state-highlighted", false)
+                        .style("opacity", 0.25);
+                }
+            });
+            document.getElementById('map-subtitle').innerText = `Filtrado por: ${regiaoName}`;
+        }
+
+        const rankingContainer = document.getElementById('ranking-list');
+        const rankedStates = planilhaData.filter(d => d.uf !== 'NAN' && d.uf !== 'UY').sort((a, b) => b.cursistas - a.cursistas);
+
+        rankedStates.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50/50 cursor-pointer transition border border-slate-100";
+            div.onmouseenter = () => updateDetails(item.uf);
+            div.onclick = () => updateDetails(item.uf);
+            div.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-slate-400 w-5">#${index + 1}</span>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</p>
+                        <p class="text-xs text-slate-400">${item.regiao}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-extrabold text-slate-900">${item.cursistas}</span>
+                    <span class="text-xs text-indigo-600 block font-medium">${item.pct.toFixed(2)}%</span>
+                </div>
+            `;
+            rankingContainer.appendChild(div);
+        });
+
+        function updateDetails(uf) {
+            const data = dataMap[uf] || { cursistas: 0, pct: 0, regiao: 'Não Informado' };
+            document.getElementById('detail-uf-badge').innerText = uf;
+            document.getElementById('detail-state-name').innerText = stateNames[uf] || uf;
+            document.getElementById('detail-region').innerText = data.regiao;
+            document.getElementById('detail-cursistas').innerText = data.cursistas.toLocaleString('pt-BR');
+            document.getElementById('detail-pct').innerText = data.pct.toFixed(2) + '%';
+        }
+
+        // Dynamically adjust ranking card height to match the left section height (map + spacing + resumo por regiao)
+        function adjustRankingHeight() {
+            const resumoSec = document.getElementById('resumo-regiao-section');
+            const rankingCard = document.getElementById('ranking-card');
+            if (resumoSec && rankingCard) {
+                // Get top offset difference between left column and right column cards if needed,
+                // or match the exact combined height of Map box + Gap + Resumo box.
+                const mapCard = document.querySelector('.lg\\:col-span-2 > div:first-child');
+                if (mapCard) {
+                    const totalHeight = mapCard.offsetHeight + 24 /* gap-6 */ + resumoSec.offsetHeight;
+                    // Subtract top/bottom padding of details & warning card or let CSS flex fill
+                    // Actually, let's subtract the heights of the other cards in the right column:
+                    // Details Card (~235px) + Warning Card (~80px) + Gap (24px + 24px)
+                    const otherCardsHeight = 235 + 80 + 48;
+                    const targetRankingHeight = Math.max(320, totalHeight - otherCardsHeight);
+                    rankingCard.style.height = targetRankingHeight + 'px';
+                }
+            }
+        }
+
+        async function loadMap() {
+            const container = document.getElementById('map-container');
+            const width = container.clientWidth;
+            const height = 400;
+
+            try {
+                const response = await fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson");
+                const geojson = await response.json();
+                
+                document.getElementById('loading-spinner').remove();
+
+                const svg = d3.select("#map-container")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                const projection = d3.geoMercator()
+                    .center([-54, -14.2])
+                    .scale(width * 0.65)
+                    .translate([width / 2, height / 2 + 5]);
+
+                const path = d3.geoPath().projection(projection);
+
+                const maxVal = d3.max(planilhaData, d => d.cursistas);
+                const colorScale = d3.scaleSequential()
+                    .domain([0, maxVal])
+                    .interpolator(d3.interpolatePurples);
+
+                svg.selectAll("path")
+                    .data(geojson.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("class", "state")
+                    .attr("fill", d => {
+                        const uf = d.properties.sigla;
+                        const match = dataMap[uf];
+                        return match ? colorScale(match.cursistas) : '#cbd5e1';
+                    })
+                    .on("mouseover", (event, d) => {
+                        const uf = d.properties.sigla;
+                        updateDetails(uf);
+                    })
+                    .on("click", (event, d) => {
+                        const uf = d.properties.sigla;
+                        updateDetails(uf);
+                    });
+
+                setTimeout(adjustRankingHeight, 100);
+
+            } catch (e) {
+                console.error("Erro ao carregar mapa via fetch:", e);
+                document.getElementById('loading-spinner').innerHTML = `<span class="text-rose-600 text-xs font-semibold">Erro ao carregar malha do mapa.</span>`;
+            }
+        }
+
+        window.onload = loadMap;
+        window.onresize = adjustRankingHeight;
+    </script>
+</body>
+</html>
