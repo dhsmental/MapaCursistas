@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/topojson-client@3"></script>
     <style>
         .state {
             stroke: #475569;
@@ -41,12 +40,12 @@
                     <i class="fa-solid fa-map-location-dot text-indigo-600 text-lg"></i>
                     Cursistas do Moodle pelo Brasil
                 </h1>
-                <p class="text-xs text-slate-500 mt-0.5">Dados extraídos do dia 14/09/2026</p>
+                <p class="text-xs text-slate-500 mt-0.5">Dados atualizados no dia 21/09/2026</p>
             </div>
             <div class="mt-3 md:mt-0 flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Planilha Consolidada (2.181 Total)
+                    Planilha Consolidada (2.213 Total)
                 </span>
             </div>
         </header>
@@ -55,8 +54,8 @@
             <!-- Card 1 -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total Geral da Planilha</p>
-                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1">2.181</h3>
+                    <p class="text-sm font-medium text-slate-500">Total de Cursistas Ativos no Moodle</p>
+                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1">2.213</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
                     <i class="fa-solid fa-users"></i>
@@ -68,7 +67,7 @@
                 <div>
                     <p class="text-sm font-medium text-slate-500">Estado Destaque (#1)</p>
                     <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Rio Grande do Sul (RS)</h3>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">638 cursistas (29,3%)</p>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">653 cursistas (29,5%)</p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
                     <i class="fa-solid fa-award"></i>
@@ -104,7 +103,7 @@
                     <div id="map-container" class="w-full h-[400px] bg-slate-50 rounded-xl relative overflow-hidden flex items-center justify-center">
                         <div id="loading-spinner" class="flex flex-col items-center justify-center gap-2">
                             <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                            <span class="text-xs text-slate-500 font-medium">Carregando mapa...</span>
+                            <span class="text-xs text-slate-500 font-medium">A carregar mapa...</span>
                         </div>
                     </div>
                 </div>
@@ -142,11 +141,11 @@
                     <div class="grid grid-cols-2 gap-4 mt-5">
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                             <span class="text-xs text-slate-500 font-medium block">Total de Cursistas</span>
-                            <span id="detail-cursistas" class="text-xl font-black text-slate-900 mt-1 block">638</span>
+                            <span id="detail-cursistas" class="text-xl font-black text-slate-900 mt-1 block">653</span>
                         </div>
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                             <span class="text-xs text-slate-500 font-medium block">% do Total</span>
-                            <span id="detail-pct" class="text-xl font-black text-indigo-600 mt-1 block">29,25%</span>
+                            <span id="detail-pct" class="text-xl font-black text-indigo-600 mt-1 block">29,5%</span>
                         </div>
                     </div>
                 </div>
@@ -159,10 +158,10 @@
                         </div>
                         <div>
                             <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Não Declarado / Sem UF</h4>
-                            <p class="text-lg font-bold text-slate-900 mt-0.5">55 cursistas</p>
+                            <p class="text-lg font-bold text-slate-900 mt-0.5">45 cursistas</p>
                         </div>
                     </div>
-                    <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-lg">2,48%</span>
+                    <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-lg">2,0%</span>
                 </div>
 
                 <!-- RANKING -->
@@ -187,35 +186,35 @@
 
     <script>
         const planilhaData = [
-            { uf: 'RS', cursistas: 638, pct: 29.25, regiao: 'Região Sul' },
-            { uf: 'PB', cursistas: 203, pct: 9.34, regiao: 'Região Nordeste' },
-            { uf: 'SP', cursistas: 144, pct: 6.62, regiao: 'Região Sudeste' },
-            { uf: 'SE', cursistas: 129, pct: 5.93, regiao: 'Região Nordeste' },
-            { uf: 'PE', cursistas: 118, pct: 5.43, regiao: 'Região Nordeste' },
-            { uf: 'PI', cursistas: 107, pct: 4.88, regiao: 'Região Nordeste' },
-            { uf: 'NAN', cursistas: 55, pct: 2.48, regiao: 'Não Definido' },
-            { uf: 'SC', cursistas: 101, pct: 4.60, regiao: 'Região Sul' },
-            { uf: 'RJ', cursistas: 100, pct: 4.60, regiao: 'Região Sudeste' },
-            { uf: 'RN', cursistas: 72, pct: 3.27, regiao: 'Região Nordeste' },
-            { uf: 'AM', cursistas: 70, pct: 3.22, regiao: 'Região Norte' },
-            { uf: 'BA', cursistas: 71, pct: 3.27, regiao: 'Regiao Nordeste' },
-            { uf: 'MS', cursistas: 68, pct: 3.04, regiao: 'Região Centro-Oeste' },
-            { uf: 'MG', cursistas: 52, pct: 2.39, regiao: 'Região Sudeste' },
-            { uf: 'CE', cursistas: 35, pct: 1.61, regiao: 'Regiao Nordeste' },
-            { uf: 'AC', cursistas: 29, pct: 1.33, regiao: 'Regiao Norte' },
-            { uf: 'PA', cursistas: 30, pct: 1.38, regiao: 'Regiao Norte' },
-            { uf: 'PR', cursistas: 28, pct: 1.29, regiao: 'Região Sul' },
-            { uf: 'MA', cursistas: 26, pct: 1.20, regiao: 'Regiao Nordeste' },
-            { uf: 'RR', cursistas: 22, pct: 1.01, regiao: 'Regiao Norte' },
-            { uf: 'RO', cursistas: 16, pct: 0.74, regiao: 'Regiao Norte' },
-            { uf: 'AL', cursistas: 16, pct: 0.74, regiao: 'Regiao Nordeste' },
-            { uf: 'DF', cursistas: 17, pct: 0.78, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'GO', cursistas: 11, pct: 0.51, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'ES', cursistas: 11, pct: 0.51, regiao: 'Regiao Sudeste' },
-            { uf: 'MT', cursistas: 4, pct: 0.18, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'TO', cursistas: 4, pct: 0.18, regiao: 'Regiao Norte' },
-            { uf: 'AP', cursistas: 4, pct: 0.18, regiao: 'Regiao Norte' },
-            { uf: 'UY', cursistas: 0, pct: 0.05, regiao: 'Exterior' }
+            { uf: 'RS', cursistas: 653, pct: 29.5, regiao: 'Região Sul' },
+            { uf: 'PB', cursistas: 203, pct: 9.2, regiao: 'Região Nordeste' },
+            { uf: 'SP', cursistas: 146, pct: 6.6, regiao: 'Região Sudeste' },
+            { uf: 'SE', cursistas: 129, pct: 5.8, regiao: 'Região Nordeste' },
+            { uf: 'PE', cursistas: 119, pct: 5.4, regiao: 'Região Nordeste' },
+            { uf: 'SC', cursistas: 109, pct: 4.9, regiao: 'Região Sul' },
+            { uf: 'PI', cursistas: 107, pct: 4.8, regiao: 'Região Nordeste' },
+            { uf: 'RJ', cursistas: 101, pct: 4.6, regiao: 'Região Sudeste' },
+            { uf: 'RN', cursistas: 75, pct: 3.4, regiao: 'Região Nordeste' },
+            { uf: 'MS', cursistas: 74, pct: 3.3, regiao: 'Região Centro-Oeste' },
+            { uf: 'BA', cursistas: 71, pct: 3.2, regiao: 'Regiao Nordeste' },
+            { uf: 'AM', cursistas: 70, pct: 3.2, regiao: 'Região Norte' },
+            { uf: 'MG', cursistas: 52, pct: 2.3, regiao: 'Região Sudeste' },
+            { uf: 'NAN', cursistas: 45, pct: 2.0, regiao: 'Não Definido' },
+            { uf: 'CE', cursistas: 35, pct: 1.6, regiao: 'Regiao Nordeste' },
+            { uf: 'PA', cursistas: 32, pct: 1.4, regiao: 'Regiao Norte' },
+            { uf: 'AC', cursistas: 29, pct: 1.3, regiao: 'Regiao Norte' },
+            { uf: 'MA', cursistas: 29, pct: 1.3, regiao: 'Regiao Nordeste' },
+            { uf: 'PR', cursistas: 28, pct: 1.3, regiao: 'Região Sul' },
+            { uf: 'RR', cursistas: 22, pct: 1.0, regiao: 'Regiao Norte' },
+            { uf: 'DF', cursistas: 18, pct: 0.8, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'RO', cursistas: 16, pct: 0.7, regiao: 'Regiao Norte' },
+            { uf: 'AL', cursistas: 16, pct: 0.7, regiao: 'Regiao Nordeste' },
+            { uf: 'ES', cursistas: 11, pct: 0.5, regiao: 'Regiao Sudeste' },
+            { uf: 'GO', cursistas: 11, pct: 0.5, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'TO', cursistas: 4, pct: 0.2, regiao: 'Regiao Norte' },
+            { uf: 'MT', cursistas: 4, pct: 0.2, regiao: 'Regiao Centro-Oeste' },
+            { uf: 'AP', cursistas: 4, pct: 0.2, regiao: 'Regiao Norte' },
+            { uf: 'UY', cursistas: 0, pct: 0.0, regiao: 'Exterior' }
         ];
 
         const stateNames = {
@@ -320,7 +319,7 @@
                 </div>
                 <div class="text-right">
                     <span class="text-sm font-extrabold text-slate-900">${item.cursistas}</span>
-                    <span class="text-xs text-indigo-600 block font-medium">${item.pct.toFixed(2)}%</span>
+                    <span class="text-xs text-indigo-600 block font-medium">${item.pct.toFixed(1)}%</span>
                 </div>
             `;
             rankingContainer.appendChild(div);
@@ -332,7 +331,7 @@
             document.getElementById('detail-state-name').innerText = stateNames[uf] || uf;
             document.getElementById('detail-region').innerText = data.regiao;
             document.getElementById('detail-cursistas').innerText = data.cursistas.toLocaleString('pt-BR');
-            document.getElementById('detail-pct').innerText = data.pct.toFixed(2) + '%';
+            document.getElementById('detail-pct').innerText = data.pct.toFixed(1) + '%';
         }
 
         function adjustRankingHeight() {
@@ -358,7 +357,8 @@
                 const response = await fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson");
                 const geojson = await response.json();
                 
-                document.getElementById('loading-spinner').remove();
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) spinner.remove();
 
                 const svg = d3.select("#map-container")
                     .append("svg")
@@ -401,7 +401,10 @@
 
             } catch (e) {
                 console.error("Erro ao carregar mapa via fetch:", e);
-                document.getElementById('loading-spinner').innerHTML = `<span class="text-rose-600 text-xs font-semibold">Erro ao carregar malha do mapa.</span>`;
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) {
+                    spinner.innerHTML = `<span class="text-rose-600 text-xs font-semibold text-center px-4">Erro ao carregar malha do mapa. Verifique a sua ligação à internet.</span>`;
+                }
             }
         }
 
