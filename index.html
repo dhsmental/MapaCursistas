@@ -10,16 +10,18 @@
     <style>
         .state {
             stroke: #334155;
+            stroke-width: 1px;
             cursor: pointer;
             transition: fill 0.2s ease;
         }
         .state-label {
-            font-family: sans-serif;
+            font-size: 8.5px;
+            font-weight: bold;
             fill: #0f172a;
             text-anchor: middle;
             dominant-baseline: central;
             pointer-events: none;
-            text-shadow: 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff;
+            text-shadow: 0px 0px 2.5px #ffffff, 0px 0px 2.5px #ffffff, 0px 0px 2.5px #ffffff;
         }
         * {
             -webkit-print-color-adjust: exact !important;
@@ -234,8 +236,8 @@
                     </div>
                 </div>
 
-                <!-- BLOCO MEIO: Mapa responsivo expansivo via ViewBox (100% de preenchimento do buraco que sobrar) -->
-                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2 p-2">
+                <!-- BLOCO MEIO: Mapa expansivo preenchendo o vazio na página -->
+                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
@@ -321,6 +323,9 @@
                 viewA4.classList.remove('flex');
                 btnDash.className = "px-3 py-1 rounded-lg bg-indigo-600 text-white shadow transition cursor-pointer";
                 btnA4.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
+                
+                // Recarrega o mapa após a aba do dashboard se tornar visível
+                setTimeout(() => loadMaps(), 50);
             } else {
                 viewA4.classList.remove('hidden');
                 viewA4.classList.add('flex');
@@ -328,9 +333,9 @@
                 viewDash.classList.remove('flex');
                 btnA4.className = "px-3 py-1 rounded-lg bg-indigo-600 text-white shadow transition cursor-pointer";
                 btnDash.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
-                renderA4Content();
                 
-                // O carregamento do D3 agora é super estável graças ao viewBox.
+                renderA4Content();
+                // Recarrega o mapa após a aba do A4 se tornar visível
                 setTimeout(() => loadMaps(), 50);
             }
         }
@@ -521,18 +526,16 @@
                 }
                 
                 // === MAPA 1: DASHBOARD PRINCIPAL ===
+                // Apenas desenha se o container estiver vísivel (evita quebrar quando a aba A4 é aberta)
                 const container1 = document.getElementById('map-container');
-                if (container1) {
+                if (container1 && container1.clientWidth > 0) {
                     container1.innerHTML = '';
+                    const w1 = container1.clientWidth;
+                    const h1 = container1.clientHeight || 220;
+                    const svg1 = d3.select("#map-container").append("svg").attr("width", w1).attr("height", h1);
                     
-                    // O desenho virtual é gerado em viewBox 800x800 px. 
-                    // O CSS se encarrega de amassar ou esticar na interface dinamicamente.
-                    const svg1 = d3.select("#map-container").append("svg")
-                        .attr("viewBox", "0 0 800 800")
-                        .attr("preserveAspectRatio", "xMidYMid meet")
-                        .attr("class", "w-full h-full");
-                    
-                    const proj1 = d3.geoMercator().fitExtent([[10, 10], [790, 790]], geojsonGlobal);
+                    // Configuração Original Exata que estava a funcionar no Dashboard
+                    const proj1 = d3.geoMercator().center([-54, -14.2]).scale(w1 * 0.55).translate([w1 / 2, h1 / 2]);
                     const path1 = d3.geoPath().projection(proj1);
 
                     svg1.selectAll("path")
@@ -541,8 +544,6 @@
                         .append("path")
                         .attr("d", path1)
                         .attr("class", "state")
-                        .style("stroke", "#334155")
-                        .style("stroke-width", "1.5px")
                         .attr("fill", d => {
                             const uf = d.properties.sigla;
                             const match = dataMap[uf];
@@ -552,19 +553,22 @@
                         .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
                 }
 
-                // === MAPA 2: CARD A4 (MAXIMIZADO) ===
+                // === MAPA 2: CARD A4 ===
+                // Apenas desenha se o container estiver visível
                 const container2 = document.getElementById('map-container-card');
-                if (container2) {
+                if (container2 && container2.clientWidth > 0) {
                     container2.innerHTML = '';
                     
-                    // O mesmo raciocínio do viewBox acima: a caixa virtual tem 800x800 
-                    // e se estica perfeitamente por todo o "flex-grow" vazio do A4.
-                    const svg2 = d3.select("#map-container-card").append("svg")
-                        .attr("viewBox", "0 0 800 800")
-                        .attr("preserveAspectRatio", "xMidYMid meet")
-                        .attr("class", "w-full h-full");
+                    // Como a aba A4 já está ativa, flex-grow já esticou este div na altura máxima disponível
+                    const w2 = container2.clientWidth;
+                    const h2 = container2.clientHeight;
                     
-                    const proj2 = d3.geoMercator().fitExtent([[20, 20], [780, 780]], geojsonGlobal);
+                    const svg2 = d3.select("#map-container-card").append("svg")
+                        .attr("width", w2)
+                        .attr("height", h2);
+                    
+                    // A função fitExtent obriga o mapa do Brasil a esticar o máximo possível para preencher o espaço h2 (com uma margem de 10px)
+                    const proj2 = d3.geoMercator().fitExtent([[10, 10], [w2 - 10, h2 - 10]], geojsonGlobal);
                     const path2 = d3.geoPath().projection(proj2);
 
                     svg2.selectAll("path")
@@ -578,9 +582,9 @@
                             return match ? getCategoricalColor(match.cursistas) : '#cbd5e1';
                         })
                         .style("stroke", "#334155")
-                        .style("stroke-width", "1.5px");
+                        .style("stroke-width", "0.7px");
 
-                    // Os textos acompanham a matriz geométrica perfeitamente ampliada
+                    // Os rótulos acompanham nativamente a escala calculada no fitExtent
                     svg2.selectAll("text")
                         .data(geojsonGlobal.features)
                         .enter()
@@ -590,9 +594,7 @@
                             const centroid = path2.centroid(d);
                             return `translate(${centroid[0]}, ${centroid[1]})`;
                         })
-                        .text(d => d.properties.sigla)
-                        .style("font-size", "15px")
-                        .style("font-weight", "900");
+                        .text(d => d.properties.sigla);
                 }
 
             } catch (e) {
