@@ -236,7 +236,7 @@
                     </div>
                 </div>
 
-                <!-- BLOCO MEIO: Mapa expansivo com tamanho ideal ajustado via viewBox -->
+                <!-- BLOCO MEIO: Mapa expansivo otimizado e ampliado via viewBox -->
                 <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
@@ -522,7 +522,7 @@
                     geojsonGlobal = await response.json();
                 }
                 
-                // === MAPA 1: DASHBOARD PRINCIPAL (Restaurado à config original exata) ===
+                // === MAPA 1: DASHBOARD PRINCIPAL (Configuração original exata preservada) ===
                 const container1 = document.getElementById('map-container');
                 if (container1 && container1.clientWidth > 0) {
                     container1.innerHTML = '';
@@ -547,17 +547,17 @@
                         .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
                 }
 
-                // === MAPA 2: CARD A4 (Visualização e Impressão idênticas e maximizadas via viewBox) ===
+                // === MAPA 2: CARD A4 (Tamanho otimizado e maximizado de forma idêntica na visualização e na impressão) ===
                 const container2 = document.getElementById('map-container-card');
                 if (container2) {
                     container2.innerHTML = '';
                     
                     const svg2 = d3.select("#map-container-card").append("svg")
-                        .attr("viewBox", "0 0 580 340")
+                        .attr("viewBox", "0 0 500 250")
                         .attr("preserveAspectRatio", "xMidYMid meet")
                         .attr("class", "w-full h-full");
                     
-                    const proj2 = d3.geoMercator().center([-54, -13.5]).scale(400).translate([290, 170]);
+                    const proj2 = d3.geoMercator().fitExtent([[10, 5], [490, 245]], geojsonGlobal);
                     const path2 = d3.geoPath().projection(proj2);
 
                     svg2.selectAll("path")
