@@ -15,7 +15,7 @@
             transition: fill 0.2s ease;
         }
         .state-label {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: bold;
             fill: #0f172a;
             text-anchor: middle;
@@ -214,7 +214,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: CARD A4 COM O BLOCO DE TABELAS EMPURRADO PARA BAIXO -->
+        <!-- ABA 2: CARD A4 COM MAPA AMPLIADO ATÉ AS TABELAS -->
         <div id="viewA4" class="hidden flex-col items-center flex-grow overflow-y-auto">
             <div class="mb-2 flex justify-between w-full max-w-[210mm] no-print items-center">
                 <span class="text-xs text-slate-500 font-medium">Pré-visualização do Relatório / Card A4</span>
@@ -234,12 +234,12 @@
                     <span class="text-[8.5px] font-bold text-indigo-700 uppercase bg-indigo-50 px-1.5 py-0.5 rounded">Mapa Geográfico Oficial</span>
                 </div>
 
-                <!-- Mapa ajustado para 340px para abrir espaço vertical -->
-                <div id="map-container-card" class="w-full h-[340px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs flex-shrink-0">
+                <!-- Mapa com altura ampliada (420px) preenchendo perfeitamente o espaço até as tabelas -->
+                <div id="map-container-card" class="w-full h-[420px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs flex-shrink-0">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
-                <!-- Bloco das tabelas com mt-auto para descer com força máxima até o rodapé -->
+                <!-- Bloco das tabelas posicionado logo abaixo preenchendo o espaço até o rodapé -->
                 <div class="grid grid-cols-2 gap-2 mt-auto flex-shrink-0">
                     <div>
                         <table class="w-full text-left text-[9.5px] border-collapse">
@@ -535,13 +535,13 @@
                     .on("mouseover", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); })
                     .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
 
-                // Mapa do Card A4 (Ajustado para 340px)
+                // Mapa do Card A4 (Aumentado para 420px com proporção excelente preenchendo até as tabelas)
                 const cardContainer = document.getElementById('map-container-card');
                 cardContainer.innerHTML = '';
                 const w2 = cardContainer.clientWidth || 380;
-                const h2 = 340;
+                const h2 = 420;
                 const svg2 = d3.select("#map-container-card").append("svg").attr("width", w2).attr("height", h2);
-                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 0.92).translate([w2 / 2, h2 / 2 + 5]);
+                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 1.12).translate([w2 / 2, h2 / 2 + 5]);
                 const path2 = d3.geoPath().projection(proj2);
 
                 svg2.selectAll("path")
