@@ -27,6 +27,26 @@
             stroke: #0f172a;
             stroke-width: 2.5px;
         }
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 5mm;
+            }
+            body { 
+                background: white !important; 
+                padding: 0 !important; 
+                zoom: 85%;
+            }
+            .no-print { display: none !important; }
+            .a4-card { 
+                box-shadow: none !important; 
+                border: none !important; 
+                margin: 0 auto !important; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                padding: 10px !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen p-4 md:p-8">
@@ -34,28 +54,28 @@
     <div class="max-w-7xl mx-auto space-y-6">
         
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100">
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100 no-print">
             <div>
                 <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2.5">
                     <i class="fa-solid fa-map-location-dot text-indigo-600 text-lg"></i>
                     Cursistas do Moodle pelo Brasil
                 </h1>
-                <p class="text-xs text-slate-500 mt-0.5">Dados atualizados no dia 21/09/2026</p>
+                <p class="text-xs text-slate-500 mt-0.5">Visualização inclusiva e acessível por categorias</p>
             </div>
             <div class="mt-3 md:mt-0 flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Planilha Consolidada (2.213 Total)
+                    Planilha Consolidada (<span id="header-total-cursistas">...</span> Total)
                 </span>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 no-print">
             <!-- Card 1 -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Cursistas Ativos no Moodle</p>
-                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1">2.213</h3>
+                    <h3 id="card-total-geral" class="text-3xl font-extrabold text-slate-900 mt-1">...</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
                     <i class="fa-solid fa-users"></i>
@@ -66,8 +86,8 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Estado Destaque (#1)</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Rio Grande do Sul (RS)</h3>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">653 cursistas (29,5%)</p>
+                    <h3 id="card-top-state-name" class="text-2xl font-extrabold text-slate-900 mt-1">...</h3>
+                    <p id="card-top-state-meta" class="text-xs text-slate-500 mt-1 font-medium">...</p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
                     <i class="fa-solid fa-award"></i>
@@ -87,7 +107,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start no-print">
             
             <!-- MAPA E LEGENDA / RESUMO -->
             <div class="lg:col-span-2 space-y-6 flex flex-col">
@@ -151,38 +171,38 @@
                         <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-circle-info text-indigo-600"></i> Detalhes do Estado
                         </h3>
-                        <span id="detail-uf-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700">RS</span>
+                        <span id="detail-uf-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700">-</span>
                     </div>
                     
                     <div class="mt-4">
-                        <h4 id="detail-state-name" class="text-xl font-extrabold text-slate-900">Rio Grande do Sul</h4>
-                        <p id="detail-region" class="text-xs text-slate-400 uppercase tracking-wide font-medium mt-0.5">Região Sul</p>
+                        <h4 id="detail-state-name" class="text-xl font-extrabold text-slate-900">Selecione um estado</h4>
+                        <p id="detail-region" class="text-xs text-slate-400 uppercase tracking-wide font-medium mt-0.5">-</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mt-5">
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                             <span class="text-xs text-slate-500 font-medium block">Total de Cursistas</span>
-                            <span id="detail-cursistas" class="text-xl font-black text-slate-900 mt-1 block">653</span>
+                            <span id="detail-cursistas" class="text-xl font-black text-slate-900 mt-1 block">0</span>
                         </div>
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                             <span class="text-xs text-slate-500 font-medium block">% do Total</span>
-                            <span id="detail-pct" class="text-xl font-black text-indigo-600 mt-1 block">29,5%</span>
+                            <span id="detail-pct" class="text-xl font-black text-indigo-600 mt-1 block">0%</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- CARTÃO NÃO DECLARADO (ND) -->
-                <div class="bg-amber-50/60 p-4 rounded-2xl shadow-sm border border-amber-200/80 flex items-center justify-between cursor-pointer hover:bg-amber-50 transition" onmouseenter="updateDetails('NAN')" onclick="updateDetails('NAN')">
+                <!-- CARTÃO NÃO DECLARADO (NAN) -->
+                <div id="card-nan" class="bg-amber-50/60 p-4 rounded-2xl shadow-sm border border-amber-200/80 flex items-center justify-between cursor-pointer hover:bg-amber-50 transition">
                     <div class="flex items-center space-x-3">
                         <div class="bg-amber-100 text-amber-700 p-2.5 rounded-xl flex items-center justify-center">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div>
                             <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Não Declarado / Sem UF</h4>
-                            <p class="text-lg font-bold text-slate-900 mt-0.5">45 cursistas</p>
+                            <p id="nan-cursistas" class="text-lg font-bold text-slate-900 mt-0.5">0 cursistas</p>
                         </div>
                     </div>
-                    <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-lg">2,0%</span>
+                    <span id="nan-pct" class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-lg">0%</span>
                 </div>
 
                 <!-- RANKING -->
@@ -195,7 +215,7 @@
                     </div>
                     
                     <div id="ranking-list" class="mt-4 space-y-3 overflow-y-auto flex-1 pr-1">
-                        <!-- Itens preenchidos via JS -->
+                        <!-- Preenchido via JS -->
                     </div>
                 </div>
 
@@ -203,58 +223,121 @@
 
         </div>
 
+        <!-- SEÇÃO DO CARD A4 / INFOGRÁFICO -->
+        <section class="mt-12 pt-8 border-t border-slate-200">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-4 no-print">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-file-image text-indigo-600"></i> Card A4 / Infográfico Integrado para Publicação
+                    </h2>
+                    <p class="text-xs text-slate-500">Contém o mapa interativo do Brasil e a relação completa de cursistas por estado.</p>
+                </div>
+                <div class="mt-3 md:mt-0 flex items-center gap-2">
+                    <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> Imprimir / Salvar PDF (A4)
+                    </button>
+                </div>
+            </div>
+
+            <!-- O CARD EM FORMATO A4 -->
+            <div class="a4-card max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden p-6 md:p-8 space-y-5 relative">
+                
+                <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest px-6 py-1.5 rounded-bl-2xl shadow-sm">
+                    Infográfico Oficial • DHSM
+                </div>
+
+                <div class="text-center space-y-1 pt-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                        <i class="fa-solid fa-chart-pie text-indigo-600"></i> Panorama Consolidado por Estado
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+                        Cursistas de Direitos Humanos e Saúde Mental pelo Brasil
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-500 max-w-lg mx-auto">
+                        Distribuição com <span id="card-total-subtitle">...</span> cursistas engajados em todo o território nacional.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div class="lg:col-span-7">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                                <i class="fa-solid fa-earth-americas text-indigo-600"></i> Mapa Geográfico de Distribuição
+                            </span>
+                        </div>
+                        <div id="map-container-card" class="w-full h-[260px] bg-white rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center">
+                            <div id="loading-spinner-card" class="flex flex-col items-center justify-center gap-2">
+                                <div class="w-6 h-6 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span class="text-[11px] text-slate-400 font-medium">A carregar mapa...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 space-y-2.5">
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Cursistas Ativos no Moodle</span>
+                            <span id="card-side-total" class="text-xl font-black text-slate-900 mt-0.5 block">...</span>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Estado Destaque (#1)</span>
+                            <span id="card-side-top-state" class="text-base font-black text-indigo-600 mt-0.5 block">...</span>
+                            <span id="card-side-top-meta" class="text-xs text-slate-500 font-medium">...</span>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Cursistas Cadastrados Guri</span>
+                            <span class="text-lg font-black text-slate-900 mt-0.5 block">4.015 registros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-list-ol text-amber-500"></i> Informações Detalhadas por Estado (Ranking Completo)
+                        </h3>
+                    </div>
+
+                    <div id="card-states-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1.5">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-400 gap-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+                        <span class="font-semibold text-slate-700">Direitos Humanos e Saúde Mental</span>
+                    </div>
+                    <span>Dados atualizados dinamicamente da planilha</span>
+                </div>
+
+            </div>
+        </section>
     </div>
 
     <script>
-        const planilhaData = [
-            { uf: 'RS', cursistas: 653, pct: 29.5, regiao: 'Região Sul' },
-            { uf: 'PB', cursistas: 203, pct: 9.2, regiao: 'Região Nordeste' },
-            { uf: 'SP', cursistas: 146, pct: 6.6, regiao: 'Região Sudeste' },
-            { uf: 'SE', cursistas: 129, pct: 5.8, regiao: 'Região Nordeste' },
-            { uf: 'PE', cursistas: 119, pct: 5.4, regiao: 'Região Nordeste' },
-            { uf: 'SC', cursistas: 109, pct: 4.9, regiao: 'Região Sul' },
-            { uf: 'PI', cursistas: 107, pct: 4.8, regiao: 'Região Nordeste' },
-            { uf: 'RJ', cursistas: 101, pct: 4.6, regiao: 'Região Sudeste' },
-            { uf: 'RN', cursistas: 75, pct: 3.4, regiao: 'Região Nordeste' },
-            { uf: 'MS', cursistas: 74, pct: 3.3, regiao: 'Região Centro-Oeste' },
-            { uf: 'BA', cursistas: 71, pct: 3.2, regiao: 'Regiao Nordeste' },
-            { uf: 'AM', cursistas: 70, pct: 3.2, regiao: 'Região Norte' },
-            { uf: 'MG', cursistas: 52, pct: 2.3, regiao: 'Região Sudeste' },
-            { uf: 'NAN', cursistas: 45, pct: 2.0, regiao: 'Não Definido' },
-            { uf: 'CE', cursistas: 35, pct: 1.6, regiao: 'Regiao Nordeste' },
-            { uf: 'PA', cursistas: 32, pct: 1.4, regiao: 'Regiao Norte' },
-            { uf: 'AC', cursistas: 29, pct: 1.3, regiao: 'Regiao Norte' },
-            { uf: 'MA', cursistas: 29, pct: 1.3, regiao: 'Regiao Nordeste' },
-            { uf: 'PR', cursistas: 28, pct: 1.3, regiao: 'Região Sul' },
-            { uf: 'RR', cursistas: 22, pct: 1.0, regiao: 'Regiao Norte' },
-            { uf: 'DF', cursistas: 18, pct: 0.8, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'RO', cursistas: 16, pct: 0.7, regiao: 'Regiao Norte' },
-            { uf: 'AL', cursistas: 16, pct: 0.7, regiao: 'Regiao Nordeste' },
-            { uf: 'ES', cursistas: 11, pct: 0.5, regiao: 'Regiao Sudeste' },
-            { uf: 'GO', cursistas: 11, pct: 0.5, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'TO', cursistas: 4, pct: 0.2, regiao: 'Regiao Norte' },
-            { uf: 'MT', cursistas: 4, pct: 0.2, regiao: 'Regiao Centro-Oeste' },
-            { uf: 'AP', cursistas: 4, pct: 0.2, regiao: 'Regiao Norte' },
-            { uf: 'UY', cursistas: 0, pct: 0.0, regiao: 'Exterior' }
-        ];
+        // ⚠️ COLE ABAIXO A SUA URL EXATA DO WEB APP GERADA NO GOOGLE APPS SCRIPT ⚠️
+        const API_URL = "SUA_URL_DO_WEB_APP_AQUI";
+
+        let planilhaData = [];
+        let dataMap = {};
+        const officialRegions = ['Região Sul', 'Região Nordeste', 'Região Sudeste', 'Região Norte', 'Região Centro-Oeste'];
 
         const stateNames = {
             'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas', 'BA': 'Bahia',
             'CE': 'Ceará', 'DF': 'Distrito Federal', 'ES': 'Espírito Santo', 'GO': 'Goiás',
             'MA': 'Maranhão', 'MT': 'Mato Grosso', 'MS': 'Mato Grosso do Sul', 'MG': 'Minas Gerais',
             'PA': 'Pará', 'PB': 'Paraíba', 'PR': 'Paraná', 'PE': 'Pernambuco', 'PI': 'Piauí',
-            'RJ': 'Rio de Janeiro', 'RN': 'Rio Grande do Norte', 'RS': 'Rio Grande do Sul',
+            'RJ': 'Rio de Janeiro', 'RN': 'Rio G. do Norte', 'RS': 'Rio Grande do Sul',
             'RO': 'Rondônia', 'RR': 'Roraima', 'SC': 'Santa Catarina', 'SP': 'São Paulo',
-            'SE': 'Sergipe', 'TO': 'Tocantins', 'NAN': 'Não Declarado', 'UY': 'Uruguai'
+            'SE': 'Sergipe', 'TO': 'Tocantins'
         };
 
-        // Função de atribuição de cor categórica amigável para daltonismo
         function getCategoricalColor(cursistas) {
-            if (cursistas >= 200) return '#4f46e5'; // Índigo Forte (Muito Alto)
-            if (cursistas >= 100) return '#059669'; // Verde Esmeralda (Alto)
-            if (cursistas >= 50)  return '#d97706'; // Âmbar / Laranja (Médio)
-            if (cursistas > 0)    return '#0ea5e9'; // Azul Céu (Baixo)
-            return '#cbd5e1';                       // Cinza (Zero / Sem dados)
+            if (cursistas >= 200) return '#4f46e5';
+            if (cursistas >= 100) return '#059669';
+            if (cursistas >= 50)  return '#d97706';
+            if (cursistas > 0)    return '#0ea5e9';
+            return '#cbd5e1';
         }
 
         function normalizeRegion(reg) {
@@ -262,44 +345,95 @@
             return reg.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
         }
 
-        const dataMap = {};
-        planilhaData.forEach(d => { 
-            if (d.regiao) {
-                d.regiaoNorm = normalizeRegion(d.regiao);
+        async function initDashboard() {
+            try {
+                const response = await fetch(API_URL);
+                planilhaData = await response.json();
+            } catch (e) {
+                console.error("Erro ao buscar dados do Sheets:", e);
+                return;
             }
-            dataMap[d.uf] = d; 
-        });
 
-        const officialRegions = ['Região Sul', 'Região Nordeste', 'Região Sudeste', 'Região Norte', 'Região Centro-Oeste'];
-        const regionStats = {};
-        
-        officialRegions.forEach(reg => {
-            regionStats[reg] = { total: 0, pct: 0 };
-        });
+            // Remove linhas indesejadas (cabeçalhos extras ou total geral que venham da planilha)
+            planilhaData = planilhaData.filter(d => d.uf && d.uf.toUpperCase() !== 'TOTAL' && d.uf.toUpperCase() !== 'UF');
 
-        planilhaData.forEach(d => {
-            let regKey = officialRegions.find(r => normalizeRegion(r) === d.regiaoNorm);
-            if (regKey && regionStats[regKey]) {
-                regionStats[regKey].total += d.cursistas;
-                regionStats[regKey].pct += d.pct;
+            dataMap = {};
+            planilhaData.forEach(d => { 
+                if (d.regiao) {
+                    d.regiaoNorm = normalizeRegion(d.regiao);
+                }
+                dataMap[d.uf] = d; 
+            });
+
+            // Soma exata dos cursistas ativos com base nos dados retornados
+            let totalGeral = planilhaData.reduce((acc, curr) => acc + curr.cursistas, 0);
+
+            document.getElementById('header-total-cursistas').innerText = totalGeral + " Total";
+            document.getElementById('card-total-geral').innerText = totalGeral.toLocaleString('pt-BR');
+            document.getElementById('card-total-subtitle').innerText = totalGeral.toLocaleString('pt-BR');
+            document.getElementById('card-side-total').innerText = totalGeral.toLocaleString('pt-BR') + " cursistas";
+
+            // Encontra o estado #1 real (maior número de cursistas, ignorando NAN)
+            const rankedStates = planilhaData.filter(d => d.uf !== 'NAN').sort((a, b) => b.cursistas - a.cursistas);
+            if (rankedStates.length > 0) {
+                const top = rankedStates[0];
+                const topName = (stateNames[top.uf] || top.uf) + ` (${top.uf})`;
+                const topMeta = `${top.cursistas} cursistas (${top.pct.toFixed(2)}%)`;
+                
+                document.getElementById('card-top-state-name').innerText = topName;
+                document.getElementById('card-top-state-meta').innerText = topMeta;
+                document.getElementById('card-side-top-state').innerText = topName;
+                document.getElementById('card-side-top-meta').innerText = topMeta;
+
+                updateDetails(top.uf);
             }
-        });
 
-        const regionsContainer = document.getElementById('regions-container');
-        officialRegions.forEach(regiao => {
-            const stat = regionStats[regiao];
-            const card = document.createElement('div');
-            card.className = "bg-teal-50/80 hover:bg-teal-100 border border-teal-200/90 p-2.5 rounded-xl cursor-pointer transition text-center group shadow-sm";
-            card.onmouseenter = () => highlightRegion(regiao);
-            card.onmouseleave = () => resetRegionFilter();
-            card.onclick = () => highlightRegion(regiao);
-            card.innerHTML = `
-                <p class="text-[11px] font-bold text-teal-800 truncate group-hover:text-teal-950">${regiao}</p>
-                <p class="text-base font-black text-slate-900 mt-0.5">${stat.total}</p>
-                <p class="text-[11px] text-teal-700 font-semibold mt-0.5">${stat.pct.toFixed(1)}%</p>
-            `;
-            regionsContainer.appendChild(card);
-        });
+            const nanData = dataMap['NAN'];
+            if (nanData) {
+                document.getElementById('nan-cursistas').innerText = nanData.cursistas + " cursistas";
+                document.getElementById('nan-pct').innerText = nanData.pct.toFixed(2) + '%';
+                document.getElementById('card-nan').onclick = () => updateDetails('NAN');
+                document.getElementById('card-nan').onmouseenter = () => updateDetails('NAN');
+            } else {
+                document.getElementById('card-nan').style.display = 'none';
+            }
+
+            renderRegions();
+            renderRanking(rankedStates);
+            renderCardStatesGrid();
+            loadMap();
+        }
+
+        function renderRegions() {
+            const regionStats = {};
+            officialRegions.forEach(reg => { regionStats[reg] = { total: 0, pct: 0 }; });
+
+            planilhaData.forEach(d => {
+                let regKey = officialRegions.find(r => normalizeRegion(r) === d.regiaoNorm);
+                if (regKey && regionStats[regKey]) {
+                    regionStats[regKey].total += d.cursistas;
+                    regionStats[regKey].pct += d.pct;
+                }
+            });
+
+            const regionsContainer = document.getElementById('regions-container');
+            regionsContainer.innerHTML = '';
+            
+            officialRegions.forEach(regiao => {
+                const stat = regionStats[regiao];
+                const card = document.createElement('div');
+                card.className = "bg-teal-50/80 hover:bg-teal-100 border border-teal-200/90 p-2.5 rounded-xl cursor-pointer transition text-center group shadow-sm";
+                card.onmouseenter = () => highlightRegion(regiao);
+                card.onmouseleave = () => resetRegionFilter();
+                card.onclick = () => highlightRegion(regiao);
+                card.innerHTML = `
+                    <p class="text-[11px] font-bold text-teal-800 truncate group-hover:text-teal-950">${regiao}</p>
+                    <p class="text-base font-black text-slate-900 mt-0.5">${stat.total}</p>
+                    <p class="text-[11px] text-teal-700 font-semibold mt-0.5">${stat.pct.toFixed(2)}%</p>
+                `;
+                regionsContainer.appendChild(card);
+            });
+        }
 
         function resetRegionFilter() {
             d3.selectAll(".state")
@@ -331,37 +465,53 @@
             document.getElementById('map-subtitle').innerText = `Filtrado por: ${regiaoName}`;
         }
 
-        const rankingContainer = document.getElementById('ranking-list');
-        const rankedStates = planilhaData.filter(d => d.uf !== 'NAN' && d.uf !== 'UY').sort((a, b) => b.cursistas - a.cursistas);
+        function renderRanking(rankedStates) {
+            const rankingContainer = document.getElementById('ranking-list');
+            rankingContainer.innerHTML = '';
 
-        rankedStates.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50/50 cursor-pointer transition border border-slate-100";
-            div.onmouseenter = () => updateDetails(item.uf);
-            div.onclick = () => updateDetails(item.uf);
-            div.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-xs font-bold text-slate-400 w-5">#${index + 1}</span>
-                    <div>
-                        <p class="text-sm font-bold text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</p>
-                        <p class="text-xs text-slate-400">${item.regiao}</p>
+            rankedStates.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50/50 cursor-pointer transition border border-slate-100";
+                div.onmouseenter = () => updateDetails(item.uf);
+                div.onclick = () => updateDetails(item.uf);
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-400 w-5">#${index + 1}</span>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</p>
+                            <p class="text-xs text-slate-400">${item.regiao}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <span class="text-sm font-extrabold text-slate-900">${item.cursistas}</span>
-                    <span class="text-xs text-indigo-600 block font-medium">${item.pct.toFixed(1)}%</span>
-                </div>
-            `;
-            rankingContainer.appendChild(div);
-        });
+                    <div class="text-right">
+                        <span class="text-sm font-extrabold text-slate-900">${item.cursistas}</span>
+                        <span class="text-xs text-indigo-600 block font-medium">${item.pct.toFixed(2)}%</span>
+                    </div>
+                `;
+                rankingContainer.appendChild(div);
+            });
+        }
+
+        function renderCardStatesGrid() {
+            const cardStatesGrid = document.getElementById('card-states-grid');
+            cardStatesGrid.innerHTML = '';
+            planilhaData.forEach(item => {
+                const stateBox = document.createElement('div');
+                stateBox.className = "bg-white p-1.5 rounded-lg border border-slate-200 text-center flex flex-col justify-between shadow-xs";
+                stateBox.innerHTML = `
+                    <span class="text-[10px] font-bold text-slate-700 truncate">${stateNames[item.uf] || item.uf} (${item.uf})</span>
+                    <span class="text-xs font-black text-indigo-700 mt-0.5">${item.cursistas} <span class="text-[10px] text-slate-700 font-bold">(${item.pct.toFixed(2)}%)</span></span>
+                `;
+                cardStatesGrid.appendChild(stateBox);
+            });
+        }
 
         function updateDetails(uf) {
             const data = dataMap[uf] || { cursistas: 0, pct: 0, regiao: 'Não Informado' };
             document.getElementById('detail-uf-badge').innerText = uf;
-            document.getElementById('detail-state-name').innerText = stateNames[uf] || uf;
+            document.getElementById('detail-state-name').innerText = stateNames[uf] || (uf === 'NAN' ? 'Não Declarado' : uf);
             document.getElementById('detail-region').innerText = data.regiao;
             document.getElementById('detail-cursistas').innerText = data.cursistas.toLocaleString('pt-BR');
-            document.getElementById('detail-pct').innerText = data.pct.toFixed(1) + '%';
+            document.getElementById('detail-pct').innerText = data.pct.toFixed(2) + '%';
         }
 
         function adjustRankingHeight() {
@@ -415,25 +565,58 @@
                     })
                     .on("mouseover", (event, d) => {
                         const uf = d.properties.sigla;
-                        updateDetails(uf);
+                        if (dataMap[uf]) updateDetails(uf);
                     })
                     .on("click", (event, d) => {
                         const uf = d.properties.sigla;
-                        updateDetails(uf);
+                        if (dataMap[uf]) updateDetails(uf);
                     });
 
+                loadCardMap(geojson);
                 setTimeout(adjustRankingHeight, 100);
 
             } catch (e) {
-                console.error("Erro ao carregar mapa via fetch:", e);
+                console.error("Erro ao carregar mapa do GeoJSON:", e);
                 const spinner = document.getElementById('loading-spinner');
                 if (spinner) {
-                    spinner.innerHTML = `<span class="text-rose-600 text-xs font-semibold text-center px-4">Erro ao carregar malha do mapa. Verifique a sua ligação à internet.</span>`;
+                    spinner.innerHTML = `<span class="text-rose-600 text-xs font-semibold text-center px-4">Erro ao carregar malha do mapa.</span>`;
                 }
             }
         }
 
-        window.onload = loadMap;
+        function loadCardMap(geojson) {
+            const cardContainer = document.getElementById('map-container-card');
+            cardContainer.innerHTML = ''; 
+            const width = cardContainer.clientWidth || 350;
+            const height = 260;
+
+            const svg = d3.select("#map-container-card")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            const projection = d3.geoMercator()
+                .center([-54, -14.2])
+                .scale(width * 0.70)
+                .translate([width / 2, height / 2 + 5]);
+
+            const path = d3.geoPath().projection(projection);
+
+            svg.selectAll("path")
+                .data(geojson.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("fill", d => {
+                    const uf = d.properties.sigla;
+                    const match = dataMap[uf];
+                    return match ? getCategoricalColor(match.cursistas) : '#cbd5e1';
+                })
+                .style("stroke", "#334155")
+                .style("stroke-width", "1px");
+        }
+
+        window.onload = initDashboard;
         window.onresize = adjustRankingHeight;
     </script>
 </body>
