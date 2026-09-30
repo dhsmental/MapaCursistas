@@ -10,18 +10,16 @@
     <style>
         .state {
             stroke: #334155;
-            stroke-width: 1px;
             cursor: pointer;
             transition: fill 0.2s ease;
         }
         .state-label {
-            font-size: 8.5px;
-            font-weight: bold;
+            font-family: sans-serif;
             fill: #0f172a;
             text-anchor: middle;
             dominant-baseline: central;
             pointer-events: none;
-            text-shadow: 0px 0px 2.5px #ffffff, 0px 0px 2.5px #ffffff, 0px 0px 2.5px #ffffff;
+            text-shadow: 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff;
         }
         * {
             -webkit-print-color-adjust: exact !important;
@@ -236,8 +234,8 @@
                     </div>
                 </div>
 
-                <!-- BLOCO MEIO: Mapa expansivo preenchendo 100% do vazio -->
-                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2">
+                <!-- BLOCO MEIO: Mapa responsivo expansivo via ViewBox (100% de preenchimento do buraco que sobrar) -->
+                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2 p-2">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
@@ -332,9 +330,8 @@
                 btnDash.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
                 renderA4Content();
                 
-                // Timeout ligeiramente maior (150ms) para ter certeza absoluta que o CSS (Flex) 
-                // calculou o espaço vazio gigante antes do D3 desenhar o mapa.
-                setTimeout(() => loadMaps(), 150);
+                // O carregamento do D3 agora é super estável graças ao viewBox.
+                setTimeout(() => loadMaps(), 50);
             }
         }
 
@@ -523,16 +520,19 @@
                     geojsonGlobal = await response.json();
                 }
                 
-                // Mapa Principal (Dashboard)
-                const container = document.getElementById('map-container');
-                if (container && container.clientWidth > 0) {
-                    container.innerHTML = '';
-                    const w1 = container.clientWidth;
-                    const h1 = container.clientHeight || 220;
-                    const svg1 = d3.select("#map-container").append("svg").attr("width", w1).attr("height", h1);
+                // === MAPA 1: DASHBOARD PRINCIPAL ===
+                const container1 = document.getElementById('map-container');
+                if (container1) {
+                    container1.innerHTML = '';
                     
-                    // Ajuste automático de proporção usando fitExtent
-                    const proj1 = d3.geoMercator().fitExtent([[15, 15], [w1 - 15, h1 - 15]], geojsonGlobal);
+                    // O desenho virtual é gerado em viewBox 800x800 px. 
+                    // O CSS se encarrega de amassar ou esticar na interface dinamicamente.
+                    const svg1 = d3.select("#map-container").append("svg")
+                        .attr("viewBox", "0 0 800 800")
+                        .attr("preserveAspectRatio", "xMidYMid meet")
+                        .attr("class", "w-full h-full");
+                    
+                    const proj1 = d3.geoMercator().fitExtent([[10, 10], [790, 790]], geojsonGlobal);
                     const path1 = d3.geoPath().projection(proj1);
 
                     svg1.selectAll("path")
@@ -541,6 +541,8 @@
                         .append("path")
                         .attr("d", path1)
                         .attr("class", "state")
+                        .style("stroke", "#334155")
+                        .style("stroke-width", "1.5px")
                         .attr("fill", d => {
                             const uf = d.properties.sigla;
                             const match = dataMap[uf];
@@ -550,17 +552,19 @@
                         .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
                 }
 
-                // Mapa do Card A4 (Escala 100% dinâmica baseada no tamanho do box flex-grow)
-                const cardContainer = document.getElementById('map-container-card');
-                if (cardContainer && cardContainer.clientWidth > 0) {
-                    cardContainer.innerHTML = '';
-                    const w2 = cardContainer.clientWidth;
-                    const h2 = cardContainer.clientHeight;
-                    const svg2 = d3.select("#map-container-card").append("svg").attr("width", w2).attr("height", h2);
+                // === MAPA 2: CARD A4 (MAXIMIZADO) ===
+                const container2 = document.getElementById('map-container-card');
+                if (container2) {
+                    container2.innerHTML = '';
                     
-                    // O D3 agora calcula automaticamente a escala e posição PERFEITA para preencher
-                    // todo o espaço (w2, h2), respeitando apenas 20px de margem em volta.
-                    const proj2 = d3.geoMercator().fitExtent([[20, 20], [w2 - 20, h2 - 20]], geojsonGlobal);
+                    // O mesmo raciocínio do viewBox acima: a caixa virtual tem 800x800 
+                    // e se estica perfeitamente por todo o "flex-grow" vazio do A4.
+                    const svg2 = d3.select("#map-container-card").append("svg")
+                        .attr("viewBox", "0 0 800 800")
+                        .attr("preserveAspectRatio", "xMidYMid meet")
+                        .attr("class", "w-full h-full");
+                    
+                    const proj2 = d3.geoMercator().fitExtent([[20, 20], [780, 780]], geojsonGlobal);
                     const path2 = d3.geoPath().projection(proj2);
 
                     svg2.selectAll("path")
@@ -574,8 +578,9 @@
                             return match ? getCategoricalColor(match.cursistas) : '#cbd5e1';
                         })
                         .style("stroke", "#334155")
-                        .style("stroke-width", "0.7px");
+                        .style("stroke-width", "1.5px");
 
+                    // Os textos acompanham a matriz geométrica perfeitamente ampliada
                     svg2.selectAll("text")
                         .data(geojsonGlobal.features)
                         .enter()
@@ -585,7 +590,9 @@
                             const centroid = path2.centroid(d);
                             return `translate(${centroid[0]}, ${centroid[1]})`;
                         })
-                        .text(d => d.properties.sigla);
+                        .text(d => d.properties.sigla)
+                        .style("font-size", "15px")
+                        .style("font-weight", "900");
                 }
 
             } catch (e) {
