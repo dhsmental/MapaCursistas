@@ -15,7 +15,7 @@
             transition: fill 0.2s ease;
         }
         .state-label {
-            font-size: 10px;
+            font-size: 8.5px;
             font-weight: bold;
             fill: #0f172a;
             text-anchor: middle;
@@ -28,8 +28,7 @@
             print-color-adjust: exact !important;
         }
         .page-a4 {
-            width: 100%;
-            max-width: 210mm;
+            width: 210mm;
             height: 297mm;
             max-height: 297mm;
             margin: 0 auto;
@@ -214,7 +213,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: CARD A4 COM MAPA AMPLIADO ATÉ AS TABELAS -->
+        <!-- ABA 2: CARD A4 COM DIMENSÕES RIGOROSAS PARA 1 PÁGINA -->
         <div id="viewA4" class="hidden flex-col items-center flex-grow overflow-y-auto">
             <div class="mb-2 flex justify-between w-full max-w-[210mm] no-print items-center">
                 <span class="text-xs text-slate-500 font-medium">Pré-visualização do Relatório / Card A4</span>
@@ -234,13 +233,13 @@
                     <span class="text-[8.5px] font-bold text-indigo-700 uppercase bg-indigo-50 px-1.5 py-0.5 rounded">Mapa Geográfico Oficial</span>
                 </div>
 
-                <!-- Mapa com altura ampliada (420px) preenchendo perfeitamente o espaço até as tabelas -->
-                <div id="map-container-card" class="w-full h-[420px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs flex-shrink-0">
+                <!-- Mapa com altura segura (280px) para garantir que nada transborde da folha A4 -->
+                <div id="map-container-card" class="w-full h-[280px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs flex-shrink-0">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
-                <!-- Bloco das tabelas posicionado logo abaixo preenchendo o espaço até o rodapé -->
-                <div class="grid grid-cols-2 gap-2 mt-auto flex-shrink-0">
+                <!-- Bloco das tabelas perfeitamente encaixado -->
+                <div class="grid grid-cols-2 gap-2 flex-shrink-0">
                     <div>
                         <table class="w-full text-left text-[9.5px] border-collapse">
                             <thead>
@@ -269,8 +268,8 @@
                     </div>
                 </div>
 
-                <!-- Rodapé posicionado na base exata da folha A4 -->
-                <div class="pt-2 border-t border-slate-300 flex-shrink-0">
+                <!-- Rodapé posicionado rigorosamente na base final da página -->
+                <div class="pt-1.5 border-t border-slate-300 flex-shrink-0">
                     <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] text-slate-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
                         <div class="flex items-center gap-1">
                             <span class="inline-block w-2.5 h-2.5 bg-blue-100 border border-blue-300 rounded-sm flex-shrink-0"></span>
@@ -495,10 +494,10 @@
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/60";
                 tr.innerHTML = `
-                    <td class="py-[4px] px-1 text-center font-mono text-[9px] text-slate-400 border-r border-slate-100">${index + 1}</td>
-                    <td class="py-[4px] px-1 font-medium text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
-                    <td class="py-[4px] px-0.5 text-center font-bold text-blue-900 bg-blue-50/50">${item.cursistas}</td>
-                    <td class="py-[4px] px-0.5 text-center font-semibold text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
+                    <td class="py-[3.5px] px-1 text-center font-mono text-[9px] text-slate-400 border-r border-slate-100">${index + 1}</td>
+                    <td class="py-[3.5px] px-1 font-medium text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
+                    <td class="py-[3.5px] px-0.5 text-center font-bold text-blue-900 bg-blue-50/50">${item.cursistas}</td>
+                    <td class="py-[3.5px] px-0.5 text-center font-semibold text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
                 `;
                 return tr;
             };
@@ -535,13 +534,13 @@
                     .on("mouseover", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); })
                     .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
 
-                // Mapa do Card A4 (Aumentado para 420px com proporção excelente preenchendo até as tabelas)
+                // Mapa do Card A4 (Ajustado para 280px para encaixar perfeitamente em 1 única página)
                 const cardContainer = document.getElementById('map-container-card');
                 cardContainer.innerHTML = '';
                 const w2 = cardContainer.clientWidth || 380;
-                const h2 = 420;
+                const h2 = 280;
                 const svg2 = d3.select("#map-container-card").append("svg").attr("width", w2).attr("height", h2);
-                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 1.12).translate([w2 / 2, h2 / 2 + 5]);
+                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 0.88).translate([w2 / 2, h2 / 2 + 5]);
                 const path2 = d3.geoPath().projection(proj2);
 
                 svg2.selectAll("path")
