@@ -236,12 +236,12 @@
                     </div>
                 </div>
 
-                <!-- BLOCO MEIO: Mapa expansivo preenchendo o vazio na página -->
+                <!-- BLOCO MEIO: Mapa expansivo com tamanho ideal ajustado via viewBox -->
                 <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
-                <!-- BLOCO BASE: Grupo de Estados + Rodapé perfeitamente fixado ao fundo -->
+                <!-- BLOCO BASE: Grupo de Estados + Rodapé fixado ao fundo -->
                 <div class="flex-shrink-0 flex flex-col">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -323,8 +323,6 @@
                 viewA4.classList.remove('flex');
                 btnDash.className = "px-3 py-1 rounded-lg bg-indigo-600 text-white shadow transition cursor-pointer";
                 btnA4.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
-                
-                // Recarrega o mapa após a aba do dashboard se tornar visível
                 setTimeout(() => loadMaps(), 50);
             } else {
                 viewA4.classList.remove('hidden');
@@ -335,7 +333,6 @@
                 btnDash.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
                 
                 renderA4Content();
-                // Recarrega o mapa após a aba do A4 se tornar visível
                 setTimeout(() => loadMaps(), 50);
             }
         }
@@ -525,16 +522,13 @@
                     geojsonGlobal = await response.json();
                 }
                 
-                // === MAPA 1: DASHBOARD PRINCIPAL ===
-                // Apenas desenha se o container estiver vísivel (evita quebrar quando a aba A4 é aberta)
+                // === MAPA 1: DASHBOARD PRINCIPAL (Restaurado à config original exata) ===
                 const container1 = document.getElementById('map-container');
                 if (container1 && container1.clientWidth > 0) {
                     container1.innerHTML = '';
                     const w1 = container1.clientWidth;
                     const h1 = container1.clientHeight || 220;
                     const svg1 = d3.select("#map-container").append("svg").attr("width", w1).attr("height", h1);
-                    
-                    // Configuração Original Exata que estava a funcionar no Dashboard
                     const proj1 = d3.geoMercator().center([-54, -14.2]).scale(w1 * 0.55).translate([w1 / 2, h1 / 2]);
                     const path1 = d3.geoPath().projection(proj1);
 
@@ -553,22 +547,17 @@
                         .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
                 }
 
-                // === MAPA 2: CARD A4 ===
-                // Apenas desenha se o container estiver visível
+                // === MAPA 2: CARD A4 (Visualização e Impressão idênticas e maximizadas via viewBox) ===
                 const container2 = document.getElementById('map-container-card');
-                if (container2 && container2.clientWidth > 0) {
+                if (container2) {
                     container2.innerHTML = '';
                     
-                    // Como a aba A4 já está ativa, flex-grow já esticou este div na altura máxima disponível
-                    const w2 = container2.clientWidth;
-                    const h2 = container2.clientHeight;
-                    
                     const svg2 = d3.select("#map-container-card").append("svg")
-                        .attr("width", w2)
-                        .attr("height", h2);
+                        .attr("viewBox", "0 0 580 340")
+                        .attr("preserveAspectRatio", "xMidYMid meet")
+                        .attr("class", "w-full h-full");
                     
-                    // A função fitExtent obriga o mapa do Brasil a esticar o máximo possível para preencher o espaço h2 (com uma margem de 10px)
-                    const proj2 = d3.geoMercator().fitExtent([[10, 10], [w2 - 10, h2 - 10]], geojsonGlobal);
+                    const proj2 = d3.geoMercator().center([-54, -13.5]).scale(400).translate([290, 170]);
                     const path2 = d3.geoPath().projection(proj2);
 
                     svg2.selectAll("path")
@@ -584,7 +573,6 @@
                         .style("stroke", "#334155")
                         .style("stroke-width", "0.7px");
 
-                    // Os rótulos acompanham nativamente a escala calculada no fitExtent
                     svg2.selectAll("text")
                         .data(geojsonGlobal.features)
                         .enter()
