@@ -222,65 +222,71 @@
                 </button>
             </div>
 
-            <div class="page-a4 border border-slate-300 rounded-lg">
-                <!-- Banner com proporção original intacta -->
-                <div class="w-full rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-white flex items-center justify-center flex-shrink-0">
-                    <img src="banner.jpg" alt="Banner do Curso" class="w-full h-auto block" style="object-fit: contain;" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
+            <div class="page-a4 border border-slate-300 rounded-lg flex flex-col">
+                
+                <!-- BLOCO TOPO: Banner + Título -->
+                <div class="flex-shrink-0 space-y-1.5">
+                    <div class="w-full rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-white flex items-center justify-center">
+                        <img src="banner.jpg" alt="Banner do Curso" class="w-full h-auto block" style="object-fit: contain;" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
+                    </div>
+
+                    <div class="border-b-2 border-slate-800 pb-0.5 flex items-center justify-between">
+                        <h2 class="text-[11px] font-black text-slate-900 uppercase tracking-tight">Quadro Consolidado de Resultados por Estado</h2>
+                        <span class="text-[8px] font-bold text-indigo-700 uppercase bg-indigo-50 px-1.5 py-0.5 rounded">Mapa Geográfico Oficial</span>
+                    </div>
                 </div>
 
-                <div class="border-b-2 border-slate-800 pb-0.5 flex items-center justify-between flex-shrink-0">
-                    <h2 class="text-xs font-black text-slate-900 uppercase tracking-tight">Quadro Consolidado de Resultados por Estado</h2>
-                    <span class="text-[8.5px] font-bold text-indigo-700 uppercase bg-indigo-50 px-1.5 py-0.5 rounded">Mapa Geográfico Oficial</span>
-                </div>
-
-                <!-- Mapa expansivo preenchendo o espaço entre o título e o grupo de estados -->
-                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs">
+                <!-- BLOCO MEIO: Mapa expansivo preenchendo 100% do vazio -->
+                <div id="map-container-card" class="w-full flex-grow bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-xs mt-2 mb-2">
                     <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                 </div>
 
-                <!-- Bloco das tabelas posicionado próximo à base final da página -->
-                <div class="grid grid-cols-2 gap-2 flex-shrink-0">
-                    <div>
-                        <table class="w-full text-left text-[9.5px] border-collapse">
-                            <thead>
-                                <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
-                                    <th class="py-1 px-1 w-4 text-center">#</th>
-                                    <th class="py-1 px-1">Estado (UF)</th>
-                                    <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
-                                    <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="a4Column1" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
-                        </table>
+                <!-- BLOCO BASE: Grupo de Estados + Rodapé perfeitamente fixado ao fundo -->
+                <div class="flex-shrink-0 flex flex-col">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <table class="w-full text-left text-[8.5px] border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
+                                        <th class="py-1 px-1 w-4 text-center">#</th>
+                                        <th class="py-1 px-1">Estado (UF)</th>
+                                        <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
+                                        <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="a4Column1" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <table class="w-full text-left text-[8.5px] border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
+                                        <th class="py-1 px-1 w-4 text-center">#</th>
+                                        <th class="py-1 px-1">Estado (UF)</th>
+                                        <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
+                                        <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="a4Column2" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div>
-                        <table class="w-full text-left text-[9.5px] border-collapse">
-                            <thead>
-                                <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
-                                    <th class="py-1 px-1 w-4 text-center">#</th>
-                                    <th class="py-1 px-1">Estado (UF)</th>
-                                    <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
-                                    <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="a4Column2" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
-                        </table>
+
+                    <!-- Rodapé -->
+                    <div class="pt-1.5 border-t border-slate-300 mt-1.5">
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] text-slate-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            <div class="flex items-center gap-1">
+                                <span class="inline-block w-2.5 h-2.5 bg-blue-100 border border-blue-300 rounded-sm flex-shrink-0"></span>
+                                <span class="truncate"><strong class="text-blue-900">Cursistas:</strong> Total de ativos na UF</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="inline-block w-2.5 h-2.5 bg-emerald-100 border border-emerald-300 rounded-sm flex-shrink-0"></span>
+                                <span class="truncate"><strong class="text-emerald-900">% Total:</strong> Proporção nacional</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Rodapé posicionado rigorosamente na base final da página -->
-                <div class="pt-1.5 border-t border-slate-300 flex-shrink-0">
-                    <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] text-slate-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                        <div class="flex items-center gap-1">
-                            <span class="inline-block w-2.5 h-2.5 bg-blue-100 border border-blue-300 rounded-sm flex-shrink-0"></span>
-                            <span class="truncate"><strong class="text-blue-900">Cursistas:</strong> Total de ativos na UF</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="inline-block w-2.5 h-2.5 bg-emerald-100 border border-emerald-300 rounded-sm flex-shrink-0"></span>
-                            <span class="truncate"><strong class="text-emerald-900">% Total:</strong> Proporção nacional</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -325,7 +331,10 @@
                 btnA4.className = "px-3 py-1 rounded-lg bg-indigo-600 text-white shadow transition cursor-pointer";
                 btnDash.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition cursor-pointer";
                 renderA4Content();
-                setTimeout(() => loadMaps(), 50);
+                
+                // Timeout ligeiramente maior (150ms) para ter certeza absoluta que o CSS (Flex) 
+                // calculou o espaço vazio gigante antes do D3 desenhar o mapa.
+                setTimeout(() => loadMaps(), 150);
             }
         }
 
@@ -495,10 +504,10 @@
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/60";
                 tr.innerHTML = `
-                    <td class="py-[3px] px-1 text-center font-mono text-[9px] text-slate-400 border-r border-slate-100">${index + 1}</td>
-                    <td class="py-[3px] px-1 font-medium text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
-                    <td class="py-[3px] px-0.5 text-center font-bold text-blue-900 bg-blue-50/50">${item.cursistas}</td>
-                    <td class="py-[3px] px-0.5 text-center font-semibold text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
+                    <td class="py-[2px] px-1 text-center font-mono text-[8.5px] text-slate-400 border-r border-slate-100">${index + 1}</td>
+                    <td class="py-[2px] px-1 font-medium text-[8.5px] text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
+                    <td class="py-[2px] px-0.5 text-center font-bold text-[8.5px] text-blue-900 bg-blue-50/50">${item.cursistas}</td>
+                    <td class="py-[2px] px-0.5 text-center font-semibold text-[8.5px] text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
                 `;
                 return tr;
             };
@@ -514,14 +523,16 @@
                     geojsonGlobal = await response.json();
                 }
                 
-                // Mapa Principal
+                // Mapa Principal (Dashboard)
                 const container = document.getElementById('map-container');
                 if (container && container.clientWidth > 0) {
                     container.innerHTML = '';
                     const w1 = container.clientWidth;
                     const h1 = container.clientHeight || 220;
                     const svg1 = d3.select("#map-container").append("svg").attr("width", w1).attr("height", h1);
-                    const proj1 = d3.geoMercator().center([-54, -14.2]).scale(w1 * 0.55).translate([w1 / 2, h1 / 2]);
+                    
+                    // Ajuste automático de proporção usando fitExtent
+                    const proj1 = d3.geoMercator().fitExtent([[15, 15], [w1 - 15, h1 - 15]], geojsonGlobal);
                     const path1 = d3.geoPath().projection(proj1);
 
                     svg1.selectAll("path")
@@ -539,14 +550,17 @@
                         .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
                 }
 
-                // Mapa do Card A4 (Expandido para preencher proporcionalmente o espaço flexível)
+                // Mapa do Card A4 (Escala 100% dinâmica baseada no tamanho do box flex-grow)
                 const cardContainer = document.getElementById('map-container-card');
                 if (cardContainer && cardContainer.clientWidth > 0) {
                     cardContainer.innerHTML = '';
                     const w2 = cardContainer.clientWidth;
-                    const h2 = cardContainer.clientHeight || 320;
+                    const h2 = cardContainer.clientHeight;
                     const svg2 = d3.select("#map-container-card").append("svg").attr("width", w2).attr("height", h2);
-                    const proj2 = d3.geoMercator().center([-54, -14.2]).scale(Math.min(w2 * 0.88, h2 * 1.45)).translate([w2 / 2, h2 / 2 + 5]);
+                    
+                    // O D3 agora calcula automaticamente a escala e posição PERFEITA para preencher
+                    // todo o espaço (w2, h2), respeitando apenas 20px de margem em volta.
+                    const proj2 = d3.geoMercator().fitExtent([[20, 20], [w2 - 20, h2 - 20]], geojsonGlobal);
                     const path2 = d3.geoPath().projection(proj2);
 
                     svg2.selectAll("path")
