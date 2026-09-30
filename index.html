@@ -35,7 +35,7 @@
             margin: 0 auto;
             background: #ffffff;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 5mm 6mm;
+            padding: 4mm 6mm;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -55,7 +55,7 @@
                 max-height: 297mm !important;
                 box-shadow: none !important;
                 margin: 0 !important;
-                padding: 5mm 6mm !important;
+                padding: 4mm 6mm !important;
                 overflow: hidden !important;
             }
             .no-print { display: none !important; }
@@ -214,7 +214,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: CARD A4 COM ESPAÇAMENTO VERTICAL OTIMIZADO -->
+        <!-- ABA 2: CARD A4 COM BANNER INTEIRO (CONTAIN) E MAPA MAXIMIZADO -->
         <div id="viewA4" class="hidden flex-col items-center flex-grow overflow-y-auto">
             <div class="mb-2 flex justify-between w-full max-w-[210mm] no-print items-center">
                 <span class="text-xs text-slate-500 font-medium">Pré-visualização do Relatório / Card A4</span>
@@ -225,42 +225,43 @@
 
             <div class="page-a4 border border-slate-300 rounded-lg">
                 <div>
-                    <div class="w-full mb-1.5 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
-                        <img src="banner.jpg" alt="Banner do Curso" class="w-full h-auto block object-cover max-h-[60px]" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
+                    <!-- Banner ajustado com object-contain para exibir a imagem inteira sem cortes -->
+                    <div class="w-full mb-1 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-900 flex items-center justify-center">
+                        <img src="banner.jpg" alt="Banner do Curso" class="w-full h-[55px] object-contain block" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
                     </div>
 
-                    <div class="border-b-2 border-slate-800 pb-1 mb-1.5 flex items-center justify-between">
+                    <div class="border-b-2 border-slate-800 pb-0.5 mb-1 flex items-center justify-between">
                         <h2 class="text-xs font-black text-slate-900 uppercase tracking-tight">Quadro Consolidado de Resultados por Estado</h2>
                         <span class="text-[8.5px] font-bold text-indigo-700 uppercase bg-indigo-50 px-1.5 py-0.5 rounded">Mapa Geográfico Oficial</span>
                     </div>
 
-                    <!-- Mapa com Altura Ideal Ajustada (200px) -->
-                    <div id="map-container-card" class="w-full h-[200px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center mb-2 shadow-xs">
+                    <!-- Mapa Maximizado (230px) -->
+                    <div id="map-container-card" class="w-full h-[230px] bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden flex items-center justify-center mb-1.5 shadow-xs">
                         <div class="text-[10px] text-slate-400 font-medium">A carregar mapa...</div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2.5">
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <table class="w-full text-left text-[9.5px] border-collapse">
+                            <table class="w-full text-left text-[9px] border-collapse">
                                 <thead>
                                     <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
-                                        <th class="py-1 px-1 w-4 text-center">#</th>
-                                        <th class="py-1 px-1">Estado (UF)</th>
-                                        <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
-                                        <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
+                                        <th class="py-0.5 px-1 w-4 text-center">#</th>
+                                        <th class="py-0.5 px-1">Estado (UF)</th>
+                                        <th class="py-0.5 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
+                                        <th class="py-0.5 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="a4Column1" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
                             </table>
                         </div>
                         <div>
-                            <table class="w-full text-left text-[9.5px] border-collapse">
+                            <table class="w-full text-left text-[9px] border-collapse">
                                 <thead>
                                     <tr class="bg-slate-800 text-white font-bold uppercase text-[7.5px]">
-                                        <th class="py-1 px-1 w-4 text-center">#</th>
-                                        <th class="py-1 px-1">Estado (UF)</th>
-                                        <th class="py-1 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
-                                        <th class="py-1 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
+                                        <th class="py-0.5 px-1 w-4 text-center">#</th>
+                                        <th class="py-0.5 px-1">Estado (UF)</th>
+                                        <th class="py-0.5 px-0.5 text-center bg-blue-900 text-white">Cursistas</th>
+                                        <th class="py-0.5 px-0.5 text-center bg-emerald-900 text-white">% Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="a4Column2" class="divide-y divide-slate-200 border-b border-slate-200"></tbody>
@@ -269,8 +270,8 @@
                     </div>
                 </div>
 
-                <div class="mt-2 pt-1.5 border-t border-slate-300">
-                    <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] text-slate-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                <div class="mt-1 pt-1 border-t border-slate-300">
+                    <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8px] text-slate-700 bg-slate-50 p-1 rounded-lg border border-slate-200">
                         <div class="flex items-center gap-1">
                             <span class="inline-block w-2.5 h-2.5 bg-blue-100 border border-blue-300 rounded-sm flex-shrink-0"></span>
                             <span class="truncate"><strong class="text-blue-900">Cursistas:</strong> Total de ativos na UF</span>
@@ -494,10 +495,10 @@
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/60";
                 tr.innerHTML = `
-                    <td class="py-[2.6px] px-1 text-center font-mono text-[8.5px] text-slate-400 border-r border-slate-100">${index + 1}</td>
-                    <td class="py-[2.6px] px-1 font-medium text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
-                    <td class="py-[2.6px] px-0.5 text-center font-bold text-blue-900 bg-blue-50/50">${item.cursistas}</td>
-                    <td class="py-[2.6px] px-0.5 text-center font-semibold text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
+                    <td class="py-[2px] px-1 text-center font-mono text-[8px] text-slate-400 border-r border-slate-100">${index + 1}</td>
+                    <td class="py-[2px] px-1 font-medium text-slate-800">${stateNames[item.uf] || item.uf} (${item.uf})</td>
+                    <td class="py-[2px] px-0.5 text-center font-bold text-blue-900 bg-blue-50/50">${item.cursistas}</td>
+                    <td class="py-[2px] px-0.5 text-center font-semibold text-emerald-900 bg-emerald-50/40">${item.pct.toFixed(2)}%</td>
                 `;
                 return tr;
             };
@@ -534,13 +535,13 @@
                     .on("mouseover", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); })
                     .on("click", (event, d) => { if (dataMap[d.properties.sigla]) updateDetails(d.properties.sigla); });
 
-                // Mapa do Card A4 (Dimensionado para alinhar perfeitamente com o Ceará acima do rodapé)
+                // Mapa do Card A4 (Maximizado e dimensionado perfeitamente)
                 const cardContainer = document.getElementById('map-container-card');
                 cardContainer.innerHTML = '';
                 const w2 = cardContainer.clientWidth || 380;
-                const h2 = 200;
+                const h2 = 230;
                 const svg2 = d3.select("#map-container-card").append("svg").attr("width", w2).attr("height", h2);
-                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 0.68).translate([w2 / 2, h2 / 2 + 5]);
+                const proj2 = d3.geoMercator().center([-54, -14.2]).scale(w2 * 0.76).translate([w2 / 2, h2 / 2 + 5]);
                 const path2 = d3.geoPath().projection(proj2);
 
                 svg2.selectAll("path")
