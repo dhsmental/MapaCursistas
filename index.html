@@ -214,7 +214,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: CARD A4 COM BANNER TOTALMENTE VISÍVEL (SEM CORTES) -->
+        <!-- ABA 2: CARD A4 COM BANNER ADAPTADO PERFEITAMENTE À LARGURA DO A4 -->
         <div id="viewA4" class="hidden flex-col items-center flex-grow overflow-y-auto">
             <div class="mb-2 flex justify-between w-full max-w-[210mm] no-print items-center">
                 <span class="text-xs text-slate-500 font-medium">Pré-visualização do Relatório / Card A4</span>
@@ -225,9 +225,9 @@
 
             <div class="page-a4 border border-slate-300 rounded-lg">
                 <div>
-                    <!-- Banner corrigido para largura 100% com altura flexível (auto) sem cortes -->
-                    <div class="w-full mb-1 overflow-hidden bg-transparent flex items-center justify-center">
-                        <img src="banner.jpg" alt="Banner do Curso" class="w-full h-auto block" style="max-height: 60px; object-fit: contain;" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
+                    <!-- Banner fixado exatamente na largura total com altura proporcional em formato de faixa A4 -->
+                    <div class="w-full mb-1 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-white flex items-center justify-center" style="height: 52px;">
+                        <img src="banner.jpg" alt="Banner do Curso" class="w-full h-full block" style="object-fit: fill;" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x120/0f172a/ffffff?text=Banner+Institucional+Direitos+Humanos+e+Saude+Mental';">
                     </div>
 
                     <div class="border-b-2 border-slate-800 pb-0.5 mb-1 flex items-center justify-between">
